@@ -2,7 +2,6 @@ package com.snacktrace.zip.impl
 
 import java.nio.charset.Charset
 import java.nio.{ByteBuffer, ByteOrder}
-import java.util.zip.ZipEntry
 
 import com.snacktrace.zip.model.{CentralDirectoryRecord, EndOfCentralDirectory, ZipMetadata}
 import com.snacktrace.zip.{ZipFileClient, ZipMetadataService}
@@ -10,7 +9,8 @@ import com.snacktrace.zip.{ZipFileClient, ZipMetadataService}
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
-  * Created by ultmast on 28/05/16.
+  * Parses the zip metadata using a ZipFileClient to request portions of the file contents
+  * Format description is on Wikipedia (https://en.wikipedia.org/wiki/Zip_(file_format))
   */
 class ZipMetadataServiceImpl(client: ZipFileClient)(implicit executionContext: ExecutionContext) extends ZipMetadataService {
   val INITIAL_REQUEST_SIZE = 22
@@ -34,7 +34,7 @@ class ZipMetadataServiceImpl(client: ZipFileClient)(implicit executionContext: E
           i <- 1 to eocd.totalCentralDirectoryRecords
         } yield {
           val record = createCentralDirectoryRecord(centralDirectoryBuf)
-          if(record.header.deep != CENTRAL_DIRECTORY_RECORD.deep) {
+          if (record.header.deep != CENTRAL_DIRECTORY_RECORD.deep) {
             throw new Exception("Expected directory record header but was not")
           }
           record

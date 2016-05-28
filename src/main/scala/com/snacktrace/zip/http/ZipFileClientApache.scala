@@ -11,7 +11,8 @@ import scala.concurrent.Future
 import scala.io.Source
 
 /**
-  * Created by ultmast on 28/05/16.
+  * An implementation of ZipFileClient that fetches chunks of the remote file. This implementation only supports remote
+  * hosts that support byte range request headers
   */
 class ZipFileClientApache(client: HttpClient) extends ZipFileClient {
   override def range(url: String, start: Long, end: Long): Array[Byte] = {

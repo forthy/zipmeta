@@ -12,6 +12,7 @@ import scala.concurrent.duration.Duration
   * Created by ultmast on 28/05/16.
   */
 class ZipMetadataServiceImplIT extends WordSpec with MustMatchers {
+
   trait Fixture {
     val client = new ZipFileClientApache(new DefaultHttpClient())
     val service = new ZipMetadataServiceImpl(client)
@@ -19,12 +20,20 @@ class ZipMetadataServiceImplIT extends WordSpec with MustMatchers {
 
   "ZipEntryServiceImplIT.getEntries" should {
     "get entries" in new Fixture {
-      val metadata = Await.result(service.getMetadata(
-        "https://oss.sonatype.org/content/repositories/releases/abbot/abbot/1.4.0/abbot-1.4.0.jar"), Duration.Inf)
-      metadata.directoryRecords.map {
-        record =>
-          println(record.fileName)
-      }
+      val expected = Seq(
+        "announcement.htm",
+        "civility.htm",
+        "con_conf.htm",
+        "Dufountain.htm",
+        "hwlt96-1.htm",
+        "usiplogo.gif",
+        "usipwall.gif",
+        "wehr7492.htm"
+      )
+      val metadata = Await.result(service.getMetadata("http://www.colorado.edu/conflict/peace/download/peace_essay.ZIP").map {
+        metadata => metadata.directoryRecords.map(_.fileName)
+      }, Duration.Inf)
+      metadata mustBe expected
     }
   }
 }
