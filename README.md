@@ -8,6 +8,10 @@ download the entire file.
 ## Example
 
 ```
+// Construct the service
+val client = new ZipFileClientApache(new DefaultHttpClient())
+val service = new ZipMetadataServiceImpl(client)
+
 // List names of all files in remote zip file
 service.getMetadata("http://www.colorado.edu/conflict/peace/download/peace.zip").map {
     metadata =>
