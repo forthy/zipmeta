@@ -34,6 +34,11 @@ class ZipMetadataServiceImplIT extends WordSpec with MustMatchers {
         metadata => metadata.directoryRecords.map(_.fileName)
       }, Duration.Inf)
       metadata mustBe expected
+
+      Await.result(service.getMetadata("https://oss.sonatype.org/content/repositories/releases/com/dyuproject/protostuff/protostuff-runtime-registry/1.0.10/protostuff-runtime-registry-1.0.10.jar").map {
+        metadata =>
+          metadata.directoryRecords.map(record => println(record.fileName))
+      }, Duration.Inf)
     }
   }
 }
