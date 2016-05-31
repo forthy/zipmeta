@@ -5,6 +5,12 @@ downloading the entire file. This is useful if you don't know if the
 zip archive has the file you're looking for, and you don't want to
 download the entire file.
 
+## SBT Coordinates
+
+```
+libraryDependencies += "com.snacktrace" % "zipmeta" % "1.0.0"
+```
+
 ## Example
 
 ```
