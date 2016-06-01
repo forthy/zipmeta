@@ -49,7 +49,7 @@ class ZipMetadataServiceImplIT extends WordSpec with MustMatchers {
         "https://oss.sonatype.org/content/repositories/releases/com/snacktrace/zipmeta_2.11/1.0.0/zipmeta_2.11-1.0.0-sources.jar",
         "com/snacktrace/zip/ZipFileClient.scala"),
         Duration.Inf)
-      actual.deep mustBe expected.deep
+      actual.content.deep mustBe expected.deep
     }
   }
 }

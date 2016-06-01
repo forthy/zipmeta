@@ -142,12 +142,12 @@ class ZipMetadataServiceImpl(client: ZipFileClient)(implicit executionContext: E
       uncompressedSize, fileNameLength, extraFieldLength, fileName, extraField)
   }
 
-  override def getFile(url: String, fileName: String): Future[Array[Byte]] = {
+  override def getFile(url: String, fileName: String): Future[ZipFile] = {
     getMetadata(url).flatMap {
       metadata =>
         val recordOpt = metadata.directoryRecords.filter {
           record =>
-            record.fileName == fileName
+            fileName.r.findFirstIn(record.fileName).isDefined
         }.headOption
         recordOpt match {
           case Some(record) =>
@@ -170,7 +170,7 @@ class ZipMetadataServiceImpl(client: ZipFileClient)(implicit executionContext: E
                 decompresser.inflate(decompressed)
                 decompresser.end
                 println(new String(decompressed, CHARSET))
-                decompressed
+                ZipFile(localHeader, decompressed)
             }
           case None => throw new FileNotFoundException(s"Could not find ${fileName}")
         }

@@ -1,6 +1,6 @@
 package com.snacktrace.zip
 
-import com.snacktrace.zip.model.ZipMetadata
+import com.snacktrace.zip.model.{ZipFile, ZipMetadata}
 
 import scala.concurrent.Future
 
@@ -21,5 +21,5 @@ trait ZipMetadataService {
     * @param fileName The name of the file to extract
     * @return The file contents, decompressed
     */
-  def getFile(url: String, fileName: String): Future[Array[Byte]]
+  def getFile(url: String, fileName: String): Future[ZipFile]
 }
