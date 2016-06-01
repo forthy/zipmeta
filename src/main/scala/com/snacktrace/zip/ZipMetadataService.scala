@@ -14,4 +14,12 @@ trait ZipMetadataService {
     * @return The zip metadata
     */
   def getMetadata(url: String): Future[ZipMetadata]
+
+  /**
+    * Reads the single file from the zip file at the given URL
+    * @param url The URL of the zip file
+    * @param fileName The name of the file to extract
+    * @return The file contents, decompressed
+    */
+  def getFile(url: String, fileName: String): Future[Array[Byte]]
 }

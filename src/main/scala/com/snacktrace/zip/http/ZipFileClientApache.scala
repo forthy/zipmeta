@@ -11,13 +11,14 @@ import org.apache.http.util.EntityUtils
 
 import scala.concurrent.Future
 import scala.io.Source
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * An implementation of ZipFileClient that fetches chunks of the remote file. This implementation only supports remote
   * hosts that support byte range request headers
   */
 class ZipFileClientApache(client: HttpClient) extends ZipFileClient {
-  override def range(url: String, start: Long, end: Long): Array[Byte] = {
+  override def range(url: String, start: Long, end: Long): Future[Array[Byte]] = Future {
     val request = new HttpGet(url)
     request.setHeader("Range", s"bytes=${start}-${end}")
     val response = client.execute(request)
@@ -33,7 +34,7 @@ class ZipFileClientApache(client: HttpClient) extends ZipFileClient {
     }
   }
 
-  override def size(url: String): Long = {
+  override def size(url: String): Future[Long] = Future {
     val request = new HttpHead(url)
     val response = client.execute(request)
     response.getStatusLine.getStatusCode match {

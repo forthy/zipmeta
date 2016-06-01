@@ -1,5 +1,8 @@
 package com.snacktrace.zip.impl
 
+import java.nio.charset.Charset
+import java.util.zip.Deflater
+
 import com.snacktrace.zip.http.ZipFileClientApache
 import org.apache.http.impl.client.DefaultHttpClient
 import org.scalatest.{MustMatchers, WordSpec}
@@ -18,7 +21,7 @@ class ZipMetadataServiceImplIT extends WordSpec with MustMatchers {
     val service = new ZipMetadataServiceImpl(client)
   }
 
-  "ZipEntryServiceImplIT.getEntries" should {
+  "ZipMetadataServiceImpl.getEntries" should {
     "get entries" in new Fixture {
       val expected = Seq(
         "announcement.htm",
@@ -34,11 +37,19 @@ class ZipMetadataServiceImplIT extends WordSpec with MustMatchers {
         metadata => metadata.directoryRecords.map(_.fileName)
       }, Duration.Inf)
       metadata mustBe expected
+    }
+  }
 
-      Await.result(service.getMetadata("https://oss.sonatype.org/content/repositories/releases/com/dyuproject/protostuff/protostuff-runtime-registry/1.0.10/protostuff-runtime-registry-1.0.10.jar").map {
-        metadata =>
-          metadata.directoryRecords.map(record => println(record.fileName))
-      }, Duration.Inf)
+  "ZipMetadataServiceImpl.getFile" should {
+    "get file" in new Fixture {
+      val expected = ("package com.snacktrace.zip\n\n/**\n  * An object that can fetch a portion of a zip file," +
+        " and can get the zip file's size\n  */\ntrait ZipFileClient {\n  def range(url: String, start: Long, " +
+        "end: Long): Array[Byte]\n  def size(url: String): Long\n}\n").getBytes(Charset.forName("UTF-8"))
+      val actual = Await.result(service.getFile(
+        "https://oss.sonatype.org/content/repositories/releases/com/snacktrace/zipmeta_2.11/1.0.0/zipmeta_2.11-1.0.0-sources.jar",
+        "com/snacktrace/zip/ZipFileClient.scala"),
+        Duration.Inf)
+      actual.deep mustBe expected.deep
     }
   }
 }
