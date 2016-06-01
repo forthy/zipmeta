@@ -8,7 +8,7 @@ download the entire file.
 ## SBT Coordinates
 
 ```
-libraryDependencies += "com.snacktrace" % "zipmeta" % "1.0.0"
+libraryDependencies += "com.snacktrace" % "zipmeta" % "1.1.0"
 ```
 
 ## Example
@@ -22,5 +22,11 @@ val service = new ZipMetadataServiceImpl(client)
 service.getMetadata("http://www.colorado.edu/conflict/peace/download/peace.zip").map {
     metadata =>
         metadata.directoryRecords.map(record => println(record.fileName))
+}
+
+// Get a file that matches the given pattern
+service.getFile("http://www.colorado.edu/conflict/peace/download/peace.zip", "^ab_cit.*$").map {
+    file =>
+        println(file.content)
 }
 ```
