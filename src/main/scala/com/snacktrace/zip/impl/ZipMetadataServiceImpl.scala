@@ -25,21 +25,25 @@ class ZipMetadataServiceImpl(client: ZipFileClient)(implicit executionContext: E
   override def getMetadata(url: String): Future[ZipMetadata] = {
     getEndOfCentralDirectory(url).flatMap {
       eocd =>
-        client.range(url, eocd.offsetOfStartOfCentralDirectory,
-          eocd.offsetOfStartOfCentralDirectory + eocd.sizeOfCentralDirectory - 1).map {
-          centralDirectoryBytes =>
-            val centralDirectoryBuf = ByteBuffer.wrap(centralDirectoryBytes)
-            centralDirectoryBuf.order(ByteOrder.LITTLE_ENDIAN)
-            val records = for {
-              i <- 1 to eocd.totalCentralDirectoryRecords
-            } yield {
-              val record = createCentralDirectoryRecord(centralDirectoryBuf)
-              if (record.header.deep != CENTRAL_DIRECTORY_RECORD.deep) {
-                throw new Exception("Expected directory record header but was not")
+        if (eocd.sizeOfCentralDirectory == 0) {
+          Future.successful(ZipMetadata(Seq(), eocd))
+        } else {
+          client.range(url, eocd.offsetOfStartOfCentralDirectory,
+            eocd.offsetOfStartOfCentralDirectory + eocd.sizeOfCentralDirectory - 1).map {
+            centralDirectoryBytes =>
+              val centralDirectoryBuf = ByteBuffer.wrap(centralDirectoryBytes)
+              centralDirectoryBuf.order(ByteOrder.LITTLE_ENDIAN)
+              val records = for {
+                i <- 1 to eocd.totalCentralDirectoryRecords
+              } yield {
+                val record = createCentralDirectoryRecord(centralDirectoryBuf)
+                if (record.header.deep != CENTRAL_DIRECTORY_RECORD.deep) {
+                  throw new Exception("Expected directory record header but was not")
+                }
+                record
               }
-              record
-            }
-            ZipMetadata(records, eocd)
+              ZipMetadata(records, eocd)
+          }
         }
     }
   }
