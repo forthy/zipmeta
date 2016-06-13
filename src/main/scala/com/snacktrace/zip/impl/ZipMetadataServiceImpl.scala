@@ -173,7 +173,6 @@ class ZipMetadataServiceImpl(client: ZipFileClient)(implicit executionContext: E
                 val decompressed = new Array[Byte](record.decompressedSize)
                 decompresser.inflate(decompressed)
                 decompresser.end
-                println(new String(decompressed, CHARSET))
                 ZipFile(localHeader, decompressed)
             }
           case None => throw new FileNotFoundException(s"Could not find ${fileName}")
