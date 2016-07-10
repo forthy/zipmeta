@@ -8,7 +8,7 @@ download the entire file.
 ## SBT Coordinates
 
 ```
-libraryDependencies += "com.snacktrace" % "zipmeta" % "1.1.0"
+libraryDependencies += "com.snacktrace" % "zipmeta_2.11" % "1.1.0"
 ```
 
 ## Example
