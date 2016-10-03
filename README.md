@@ -1,5 +1,7 @@
 # ZipMetadataService
 
+[![Snacktrace Score](http://snacktrace.com/artifacts/com.snacktrace/zipmeta_2.11/latest/score/image "Snacktrace Score")](http://snacktrace.com/artifacts/com.snacktrace/zipmeta_2.11/latest)
+
 Enables you to fetch metadata from a remote zip file without
 downloading the entire file. This is useful if you don't know if the
 zip archive has the file you're looking for, and you don't want to
